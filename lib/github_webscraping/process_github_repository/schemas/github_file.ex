@@ -1,9 +1,15 @@
-defmodule GithubWebscraping.Schemas.GithubFile do
-  defstruct(
-    file_url: nil,
-    file_name: nil,
-    extension: nil,
-    file_bytes: nil,
-    file_lines: nil
-  )
+defmodule GithubWebscraping.ProcessGithubRepository.Schemas.GithubFile do
+  alias GithubWebscraping.ProcessGithubRepository.Schemas
+
+  defstruct [:file_url, :file_name, :extension, :file_bytes, :file_lines]
+
+  def build(file_url, file_name, extension, file_bytes, file_lines) do
+    %Schemas.GithubFile{
+      file_url: file_url,
+      file_name: file_name,
+      extension: extension,
+      file_bytes: file_bytes,
+      file_lines: file_lines
+    }
+  end
 end

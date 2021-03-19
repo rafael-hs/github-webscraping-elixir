@@ -1,9 +1,51 @@
 defmodule GithubWebscraping.ProcessGithubRepository.MappingRepository do
   alias GithubWebscraping.Constants
 
+  @files_repo ""
+  @files ""
+
   def process(url) do
-    IO.puts(Constants.git_url_base())
-    IO.puts(url)
+    urls = getUrls(url)
+
+    result =
+      Enum.each(urls, fn url ->
+        cond do
+          is_paste?(url) == true ->
+            IO.puts("is a paste")
+
+          is_paste?(url) == false ->
+            IO.puts("not a paste")
+        end
+      end)
+
+    result
+  end
+
+  def build_file(url) do
+    {:ok, html} = loadStringUrl(url) |> Floki.parse_document()
+
+    archive_name =
+      html
+      |> Floki.find("div.repository-content")
+      |> Floki.find("div.d-flex.flex-items-start.flex-shrink-0")
+      |> Floki.find("strong.final-path")
+      |> Floki.text()
+
+    archive_name
+  end
+
+  def getUrls(url) do
+    url
+    |> loadStringUrl()
+    |> Floki.parse_document!()
+    |> Floki.find("div.js-details-container.Details")
+    |> Floki.find("div.js-navigation-item")
+    |> Floki.find("a.js-navigation-open.Link--primary")
+    |> Floki.attribute("href")
+  end
+
+  def loadStringUrl(url) do
+    HTTPoison.get!(url).body
   end
 
   def return_line_numbers(lines_input) do
