@@ -14,9 +14,9 @@ defmodule GithubWebscrapingWeb.Router do
   end
 
   scope "/", GithubWebscrapingWeb do
-    pipe_through :browser
+    pipe_through :api
 
-    get "/", PageController, :index
+    post "/get_repository_info", GithubWebscrapingController, :index
   end
 
   # Other scopes may use custom stacks.
