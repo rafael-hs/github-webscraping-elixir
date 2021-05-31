@@ -12,7 +12,11 @@ defmodule GithubWebscraping.MappingRepository do
   end
 
   defp mapping_repository_by_url(url) do
-    urls = get_urls(is_first_url(url))
+    urls =
+      url
+      |> first_url?()
+      |> get_urls()
+
     files_url = get_files_url(urls)
     pastes_url = get_pastes_url(urls)
 
@@ -62,7 +66,7 @@ defmodule GithubWebscraping.MappingRepository do
     |> Floki.attribute("href")
   end
 
-  defp download_string_url(url) do
+  def download_string_url(url) do
     HTTPoison.get!(url).body
   end
 
@@ -74,7 +78,7 @@ defmodule GithubWebscraping.MappingRepository do
     Enum.filter(urls, fn url -> url =~ "tree" end)
   end
 
-  defp is_first_url(url) do
+  defp first_url?(url) do
     if url =~ "https://github.com/" do
       url
     else
