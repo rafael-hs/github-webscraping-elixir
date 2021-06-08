@@ -4,6 +4,7 @@ defmodule GithubWebscraping.Schemas.GithubFile do
   @derive {Jason.Encoder, only: [:file_url, :file_name, :extension, :file_bytes, :file_lines]}
   defstruct [:file_url, :file_name, :extension, :file_bytes, :file_lines]
 
+  @spec build(String.t(), String.t(), String.t(), String.t(), integer()) :: %GithubFile{}
   def build(file_url, file_name, extension, file_bytes, file_lines) do
     %GithubFile{
       file_url: file_url,

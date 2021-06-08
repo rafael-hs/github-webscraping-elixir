@@ -2,6 +2,7 @@ defmodule GithubWebscraping.ExtractFileInfos do
   @spec fetch_file_name(String.t()) :: binary()
   def fetch_file_name(html) do
     html
+    |> Floki.parse_document!()
     |> Floki.find("div.repository-content")
     |> Floki.find("div.d-flex.flex-items-start.flex-shrink-0")
     |> Floki.find("strong.final-path")
@@ -12,6 +13,7 @@ defmodule GithubWebscraping.ExtractFileInfos do
   def fetch_extension(html) do
     file_name =
       html
+      |> Floki.parse_document!()
       |> Floki.find("div.repository-content")
       |> Floki.find("div.d-flex.flex-items-start.flex-shrink-0")
       |> Floki.find("strong.final-path")
@@ -24,6 +26,7 @@ defmodule GithubWebscraping.ExtractFileInfos do
   def fetch_line_numbers(html) do
     line_numbers_html =
       html
+      |> Floki.parse_document!()
       |> Floki.find("div.text-mono.f6.flex-auto.pr-3")
       |> Floki.text()
 
@@ -49,6 +52,7 @@ defmodule GithubWebscraping.ExtractFileInfos do
   def fetch_file_size_in_bytes(html) do
     string_bytes =
       html
+      |> Floki.parse_document!()
       |> Floki.find("div.text-mono.f6.flex-auto.pr-3")
       |> Floki.text()
 

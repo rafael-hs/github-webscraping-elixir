@@ -47,7 +47,7 @@ defmodule GithubWebscraping.MappingRepository do
   end
 
   defp build_file(url) do
-    html = download_string_url(url) |> Floki.parse_document!()
+    html = download_string_url(url)
     name = ExtractFileInfos.fetch_file_name(html)
     lines = ExtractFileInfos.fetch_line_numbers(html)
     extension = ExtractFileInfos.fetch_extension(html)
