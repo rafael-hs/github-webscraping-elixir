@@ -1,9 +1,9 @@
 defmodule GithubWebscrapingWeb.GithubWebscrapingController do
   use GithubWebscrapingWeb, :controller
 
-  alias Lib.GithubWebscraping
+  alias GitGithubWebscraping.GithubWebscraping
 
-  def index(conn, %{"github_url" => github_url}) do
+  def show(conn, %{"github_url" => github_url}) do
     files = GithubWebscraping.get_repository_infos(github_url)
     json(conn, files)
   end

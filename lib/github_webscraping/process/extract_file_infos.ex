@@ -1,4 +1,4 @@
-defmodule GithubWebscraping.ExtractFileInfos do
+defmodule GithubWebscraping.Process.ExtractFileInfos do
   @spec fetch_file_name(String.t()) :: binary()
   def fetch_file_name(html) do
     html
@@ -11,15 +11,13 @@ defmodule GithubWebscraping.ExtractFileInfos do
 
   @spec fetch_extension(String.t()) :: binary()
   def fetch_extension(html) do
-    file_name =
-      html
-      |> Floki.parse_document!()
-      |> Floki.find("div.repository-content")
-      |> Floki.find("div.d-flex.flex-items-start.flex-shrink-0")
-      |> Floki.find("strong.final-path")
-      |> Floki.text()
-
-    Path.extname(file_name)
+    html
+    |> Floki.parse_document!()
+    |> Floki.find("div.repository-content")
+    |> Floki.find("div.d-flex.flex-items-start.flex-shrink-0")
+    |> Floki.find("strong.final-path")
+    |> Floki.text()
+    |> Path.extname()
   end
 
   @spec fetch_line_numbers(String.t()) :: integer()

@@ -1,14 +1,14 @@
-defmodule GithubWebscraping.MappingRepository do
-  alias GithubWebscraping.{ExtractFileInfos, GroupFileInformation}
+defmodule GithubWebscraping.Process.ExtractRepositoryInfo do
+  alias GithubWebscraping.Process.{ExtractFileInfos, GroupFileInformation}
   alias GithubWebscraping.Schemas.GithubFile
 
   @git_url_base "https://github.com"
 
-  @spec process(String.t()) :: map()
-  def process(url) do
-    files = mapping_repository_by_url(url)
-    files_with_all_infos = GroupFileInformation.group_infos(files)
-    files_with_all_infos
+  @spec run(String.t()) :: map()
+  def run(url) do
+    url
+    |> mapping_repository_by_url()
+    |> GroupFileInformation.group_infos()
   end
 
   defp mapping_repository_by_url(url) do
@@ -18,12 +18,21 @@ defmodule GithubWebscraping.MappingRepository do
       |> get_urls()
 
     files_url = get_files_url(urls)
-    pastes_url = get_pastes_url(urls)
+    pastes_url = get_directories_url(urls)
 
     files =
-      Enum.map(files_url, fn file_url ->
-        build_file(@git_url_base <> file_url)
-      end)
+      files_url
+      |> Task.async_stream(
+        fn file_url ->
+          try do
+            build_file(@git_url_base <> file_url)
+          catch
+            error -> IO.inspect(error)
+          end
+        end,
+        timeout: :infinity
+      )
+      |> Enum.map(&elem(&1, 1))
 
     IO.puts("\n----------Returned files----------\n")
     IO.inspect(files)
@@ -74,7 +83,7 @@ defmodule GithubWebscraping.MappingRepository do
     Enum.filter(urls, fn url -> url =~ "blob" end)
   end
 
-  defp get_pastes_url(urls) do
+  defp get_directories_url(urls) do
     Enum.filter(urls, fn url -> url =~ "tree" end)
   end
 
